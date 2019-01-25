@@ -1,0 +1,57 @@
+body{
+	margin:0;
+}
+
+#central{
+	background-color: tomato;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+	height: 800px;
+
+}
+#tabuleiro{
+	background-color: black;
+	width: 500px;
+	box-shadow: 5px 10px 8px ;
+
+}
+.ocupado{
+	border-radius: 30px;
+	background-image: url("../img/botao.png");
+	background-size: 100%;
+	padding: 15px;
+	margin:5px;
+	border:none;
+
+}
+.ocupado:focus{
+	background-image: url("../img/botaoHover1.png");
+	background-size: 100%;
+	padding: 15px;
+	margin:5px;
+	border:none;
+
+}
+.vazio{
+	border-radius: 30px;
+	padding: 15px;
+	margin:5px;
+	background-image: url("../img/hole.jpg");
+	background-size: 100%;
+	
+	border:none;
+}
+.ocupado:hover {
+	background-image: url("../img/botaoHover1.png");
+	background-size: 100%;
+}
+.linha{
+	display: flex;
+	justify-content: center;
+}
+.btnInvisivel{
+	
+}
