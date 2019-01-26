@@ -3,7 +3,6 @@ var x=0; //armazena a coordenada x do botao clicado
 var prevX=0; //armazena a coordenada x do botao clicado anteriormente
 var y=0;
 var prevY=0;
-var flag=false;//indica se um botão foi clicado anteriormente
 var classe="";
 var prevClasse="";
 //matriz 13 x 13
@@ -17,7 +16,7 @@ var matriz = [[-1,-1,-1,1,1,1,-1,-1,-1], [-1,-1,-1,1,1,1,-1,-1,-1],
 [-1,-1,-1,1,1,1,-1,-1,-1],[-1,-1,-1,1,1,1,-1,-1,-1]];//-1 são espaços inexistentes, 0 os espaços vazios e 1 os espaços ocupados com peças
 
 $(document).ready(function(){
-  		$("button").click(function(){
+  	$("button").click(function(){
   		var coordenada;
 
   		prevX = x;
@@ -29,68 +28,110 @@ $(document).ready(function(){
   		y = parseInt(coordenada[1]);
   		
   		classe = $(this).attr('class');
-  		
-  		if(flag){ //no primeiro clique não faz nada, pois nao tinha coordenada do botao anterior
-	  		if(classe == "vazio" && prevClasse == "ocupado"){
-	  			if(x == (prevX + 2) && y == prevY ){ //move down
-	  				if(matriz[x-1][y]==1){
+  		move();
 
-	  					console.log("prevX="+prevX+" prevY="+prevY);
-	  					console.log("X="+x+" Y="+y);
-
-	  					matriz[x-1][y]=0;
-	  					matriz[x][y]=1;
-	  					matriz[prevX][prevY]=0;
-	  		
-	  					$("#"+(x-1)+"_"+y).removeClass("ocupado").addClass("vazio");
-	  					$("#"+x+"_"+y).removeClass("vazio").addClass("ocupado");
-	  					$("#"+prevX+"_"+prevY).removeClass("ocupado").addClass("vazio");
-
-	  				}
-
-	  			}else if(x == (prevX -2) && y == prevY){ //move up
-	  				if(matriz[x+1][y]==1){
-
-	  					matriz[x+1][y]=0;
-	  					matriz[x][y]=1;
-	  					matriz[prevX][prevY]=0;
-	  				
-	  					$("#"+(x+1)+"_"+y).removeClass("ocupado").addClass("vazio");
-	  					$("#"+x+"_"+y).removeClass("vazio").addClass("ocupado");
-	  					$("#"+prevX+"_"+prevY).removeClass("ocupado").addClass("vazio");
-
-	  				}
-
-
-	  			}else if(y == (prevY + 2) && x == prevX){ //move to the right
-	  				if(matriz[x][y-1]==1){
-	  					console.log("prevClasse="+prevClasse);
-	  			        console.log("Classe="+classe);
-	  					matriz[x][y-1]=0;
-	  					matriz[x][y]=1;
-	  					matriz[prevX][prevY]=0;
-	  					
-	  					$("#"+x+"_"+(y-1)).removeClass("ocupado").addClass("vazio");
-	  					$("#"+x+"_"+y).removeClass("vazio").addClass("ocupado");
-	  					$("#"+prevX+"_"+prevY).removeClass("ocupado").addClass("vazio");
-
-	  				}
-
-	  			}else if(y == prevY - 2 && x == prevX){ //move to the left
-	  				if(matriz[x][y+1]==1){
-	  					matriz[x][y+1]=0;
-	  					matriz[x][y]=1;
-	  					matriz[prevX][prevY]=0;
-	  					
-	  					$("#"+x+"_"+(y+1)).removeClass("ocupado").addClass("vazio");
-	  					$("#"+x+"_"+y).removeClass("vazio").addClass("ocupado");
-	  					$("#"+prevX+"_"+prevY).removeClass("ocupado").addClass("vazio");
-
-	  				}
-	  			}
-	  		}
- 	   }
- 	   flag = true;	
  	});
 });
 	
+function move (){
+	if(classe == "vazio" && prevClasse == "ocupado"){
+	  	if(x == (prevX + 2) && y == prevY ){ //move down
+	  				if(matriz[x-1][y]==1){
+	  					matriz[x-1][y]=0;
+	  					matriz[x][y]=1;
+						matriz[prevX][prevY]=0;
+						drawTable();
+	  				}
+	  	}else if(x == (prevX -2) && y == prevY){ //move up
+	  				if(matriz[x+1][y]==1){
+	  					matriz[x+1][y]=0;
+	  					matriz[x][y]=1;
+						matriz[prevX][prevY]=0;
+						drawTable();
+	  				}
+	  	}else if(y == (prevY + 2) && x == prevX){ //move to the right
+	  				if(matriz[x][y-1]==1){
+	  					matriz[x][y-1]=0;
+	  					matriz[x][y]=1;
+						matriz[prevX][prevY]=0;
+						drawTable();
+	  					
+	  				}
+	  	}else if(y == prevY - 2 && x == prevX){ //move to the left
+	  				if(matriz[x][y+1]==1){
+	  					matriz[x][y+1]=0;
+	  					matriz[x][y]=1;
+						matriz[prevX][prevY]=0;
+						drawTable();
+	  				}
+	  	}
+	  	checaDerrota();
+	}
+}
+
+function checaDerrota(){
+	var flag = false;
+	for(var i = 0; i<matriz[0].length; i++){
+		for(var j = 0; j<matriz[0].length; j++){
+			if(matriz[i][j]==1){ //só procura pelos vizinhos se tiver peça
+				if(j == 0 && i==0){ //se estiver na primeira coluna e primeira linha
+					if(matriz[i+1][j] ==1 || matriz[i][j+1] ==1){
+						flag = true;
+					}
+
+				}else if(j == matriz[0].length -1 && i==0){ //se estiver na última coluna e primeira linha
+					if(matriz[i+1][j] ==1 || matriz[i][j-1]  ==1 ){
+						flag = true;
+					}
+				}else if(j == 0 && i == matriz[0].length -1){//se estiver na primeira coluna e última linha
+					if(matriz[i-1][j] == 1  || matriz[i][j+1] ==1  ){
+						flag = true;
+					}
+				}else if(j == matriz[0].length -1 && i == matriz[0].length -1){//se estiver na ultima coluna e última linha
+					if(matriz[i-1][j] == 1 ||  matriz[i][j-1]  == 1 ){
+						flag = true;
+					}
+				}else if(i == 0){//se estiver na primeira linha
+					if(matriz[i+1][j] ==1 || matriz[i][j+1] ==1 || matriz[i][j-1]  ==1 ){
+						flag = true;
+					}
+				}else if(i == matriz[0].length -1){//se estiver na última linha
+					if(matriz[i-1][j] == 1 || matriz[i][j+1] ==1 || matriz[i][j-1]  ==1 ){
+						flag = true;
+					}
+				}else if(j == 0){//se estver na primeira coluna
+					if(matriz[i-1][j] == 1 || matriz[i+1][j] ==1 || matriz[i][j+1] ==1){
+						flag = true;
+					}
+				}else if(j == matriz[0].length -1 ){// se estiver na última coluna
+					if(matriz[i-1][j] == 1 || matriz[i+1][j] ==1 || matriz[i][j-1]  ==1 ){
+						flag = true;
+					}
+				}else{
+					if(matriz[i-1][j] == 1 || matriz[i+1][j] ==1 || matriz[i][j+1] ==1 || matriz[i][j-1]  ==1 ){
+						flag = true;
+					}
+				}
+			}
+			
+		}
+		if (flag){
+			break;
+		}
+	}
+	if(!flag){
+		alert("VC PERDEU!!!");
+	}
+}
+
+function drawTable(){
+	for(var i = 0; i<matriz[0].length; i++){
+		for(var j = 0; j<matriz[0].length; j++){
+			if(matriz[i][j]==1){
+				$("#"+i+"_"+j).removeClass("vazio").addClass("ocupado");
+			}else if(matriz[i][j]==0){
+				$("#"+i+"_"+j).removeClass("ocupado").addClass("vazio");
+			}
+		}
+	}
+}

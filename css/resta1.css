@@ -3,10 +3,13 @@ body{
 }
 
 #central{
-	background-color: tomato;
+	/*background-color: black;
+	background-image: url("../img/back.jpg");*/
+	background-color: #070707;
+	background-size: 100%;
 	width: 100%;
 	display: flex;
-	justify-content: center;
+	justify-content: center; /*centraliza elementos dentro do elemente que tem display:flex*/
 	align-items: center;
 	flex-wrap: wrap;
 	height: 800px;
@@ -19,7 +22,7 @@ body{
 
 }
 .ocupado{
-	border-radius: 30px;
+	border-radius: 30px; /*arredonda as quinas do botão*/
 	background-image: url("../img/botao.png");
 	background-size: 100%;
 	padding: 15px;
@@ -33,6 +36,7 @@ body{
 	padding: 15px;
 	margin:5px;
 	border:none;
+	outline: none; /*remove a borda azul em volta do botão clicado*/
 
 }
 .vazio{
