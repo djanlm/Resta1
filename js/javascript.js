@@ -5,18 +5,16 @@ var y=0;
 var prevY=0;
 var classe="";
 var prevClasse="";
-//matriz 13 x 13
-/*var matriz = [[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,1,1,1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,1,1,1,-1,-1,-1,-1,-1], 
-[-1,-1,-1,-1,-1,1,1,1,-1,-1,-1,-1,-1], [-1,-1,1,1,1,1,1,1,1,1,1,-1,-1], [-1,-1,1,1,1,1,0,1,1,1,1,-1,-1], [-1,-1,1,1,1,1,1,1,1,1,1,-1,-1,], [-1,-1,-1,-1,-1,1,1,1,-1,-1,-1,-1,-1], 
-[-1,-1,-1,-1,-1,1,1,1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,1,1,1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1], [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]];//-1 são espaços inexistentes, 0 os espaços vazios e 1 os espaços ocupados com peças
-*/
+var cont = 44;
 //matriz 9 x 9
 var matriz = [[-1,-1,-1,1,1,1,-1,-1,-1], [-1,-1,-1,1,1,1,-1,-1,-1], 
 [-1,-1,-1,1,1,1,-1,-1,-1], [1,1,1,1,1,1,1,1,1], [1,1,1,1,0,1,1,1,1], [1,1,1,1,1,1,1,1,1], [-1,-1,-1,1,1,1,-1,-1,-1], 
 [-1,-1,-1,1,1,1,-1,-1,-1],[-1,-1,-1,1,1,1,-1,-1,-1]];//-1 são espaços inexistentes, 0 os espaços vazios e 1 os espaços ocupados com peças
+var memoria = []; //vai guardar todas as mudanças do tabuleiro
+memoria.push($.extend(true, [], matriz)); //$.extend é uma funcao do jquery que clona objetos, nesse caso a matriz. sem ela ambos arrays apontam para o mesmo lugar.
 
 $(document).ready(function(){
-  	$("button").click(function(){
+  	$(".peace").click(function(){
   		var coordenada;
 
   		prevX = x;
@@ -27,9 +25,29 @@ $(document).ready(function(){
   		x = parseInt(coordenada[0]);
   		y = parseInt(coordenada[1]);
   		
-  		classe = $(this).attr('class');
+  		classe = $(this).attr('class').split(" ")[1];//o attr('class')retorna uma lista com as duas classes do botao [peace ocupado], por isso fiz o split e peguei o elemento de indice 1 que é a segunda classe (ocupado)
+  		
   		move();
 
+ 	});
+
+
+  	//efeitos no botão de retorno
+ 	$(".returnBtn").mousedown(function(){
+ 		$(this).css({"width":"20px","height":"30px"});
+ 		if(memoria.length>1){
+ 			memoria.pop();
+ 			console.log(memoria);
+ 			matriz =  $.extend(true, [], memoria[memoria.length-1]);
+ 			drawTableReturn();
+
+ 		} 		
+ 	});
+ 	$(".returnBtn").mouseup(function(){
+ 		$(this).css({"width":"25px","height":"35px"});
+ 	});
+ 	$(".returnBtn").mouseleave(function(){
+ 		$(this).css({"width":"25px","height":"35px"});
  	});
 });
 	
@@ -66,9 +84,12 @@ function move (){
 	  				}
 	  	}
 	  	checaDerrota();
+	  	cont -= 1;
 	}
 }
 
+
+////////////falta checar o caso em que ficam 3 peças numa fileira só/////////
 function checaDerrota(){
 	var flag = false;
 	for(var i = 0; i<matriz[0].length; i++){
@@ -120,7 +141,24 @@ function checaDerrota(){
 		}
 	}
 	if(!flag){
-		alert("VC PERDEU!!!");
+		alert("Fim de Jogo!!!");
+		switch(cont){
+			case 1:
+				alert("Você é o campão!! Você venceu!!!");
+				break;
+			case 2:
+				alert("Você quase chega lá, foi por pouco!!!");
+				break;
+			case 3:
+				alert("Só faltaram 2, foi por pouco!!!");
+				break;
+			case 4:
+				alert("Continue entando, está quase lá.");
+				break;
+			default:
+				alert("Continue tentando...");
+		}
+
 	}
 }
 
@@ -134,4 +172,18 @@ function drawTable(){
 			}
 		}
 	}
+	var matrizAux = $.extend(true, [], matriz); //$.extend é uma funcao do jquery que clona objetos, nesse caso a matriz. sem ela ambos arrays apontam para o mesmo lugar.
+	memoria.push(matrizAux);
+}
+function drawTableReturn(){
+	for(var i = 0; i<matriz[0].length; i++){
+		for(var j = 0; j<matriz[0].length; j++){
+			if(matriz[i][j]==1){
+				$("#"+i+"_"+j).removeClass("vazio").addClass("ocupado");
+			}else if(matriz[i][j]==0){
+				$("#"+i+"_"+j).removeClass("ocupado").addClass("vazio");
+			}
+		}
+	}
+	cont += 1;
 }
